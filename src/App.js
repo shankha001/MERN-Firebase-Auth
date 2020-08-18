@@ -1,10 +1,11 @@
 import React from "react";
 import "./App.css";
+import Login from "./pages/login/login";
 
 function App() {
   return (
     <div className="App">
-      <h1>MERN-FIREBASE-AUTH</h1>
+      <Login />
     </div>
   );
 }
