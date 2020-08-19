@@ -1,22 +1,30 @@
 import React, { useEffect } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
-
 import "./App.css";
 import Login from "./pages/login/login";
 import Homepage from "./pages/homepage/homepage";
 
-function App() {
-  useEffect((userAuth) => {
-    //check Auth
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { setCurrentUser } from "./redux/user/user.actions";
+import { selectCurrentUser } from "./redux/user/user.selectors";
 
+function App({ setCurrentUser }) {
+  useEffect(() => {
+    //check Auth
     const unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
-        console.log(userRef);
+        userRef.onSnapshot((snapShot) => {
+          setCurrentUser({
+            id: snapShot.id,
+            ...snapShot.data(),
+          });
+        });
       }
 
-      // setCurrentUser(userAuth);
+      setCurrentUser(userAuth);
     });
     //clean up
     return () => {
@@ -34,4 +42,12 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
