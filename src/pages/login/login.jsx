@@ -5,7 +5,7 @@ import animeData from "../../lottie/29522-space-tour.json";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitter } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
-
+import { auth, signInWithGoogle } from "../../firebase/firebase.utils";
 import { IoLogoFacebook } from "react-icons/io";
 
 import "./login.styles.scss";
@@ -61,7 +61,10 @@ function Login() {
 
               <p>Or Sign In With : </p>
               <div className="login__icons-container">
-                <FcGoogle style={{ margin: "0 10px", cursor: "pointer" }} />
+                <FcGoogle
+                  style={{ margin: "0 10px", cursor: "pointer" }}
+                  onClick={signInWithGoogle}
+                />
                 <FaTwitter
                   style={{
                     margin: "0 10px",
