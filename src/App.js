@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
-import "./App.css";
-import Login from "./pages/login/login";
+import Login from "./pages/loginpage/login";
 import Homepage from "./pages/homepage/homepage";
+import Register from "./pages/registerpage/register";
 
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -30,13 +30,14 @@ function App({ setCurrentUser }) {
     return () => {
       unsubscribeFromAuth();
     };
-  }, []);
+  }, [setCurrentUser]);
 
   return (
     <div>
       <Switch>
         <Route exact path="/" component={Homepage} />
-        <Route exact path="/signin" render={Login} />
+        <Route exact path="/login" render={Login} />
+        <Route exact path="/register" render={Register} />
       </Switch>
     </div>
   );

@@ -4,8 +4,9 @@ import { auth } from "../../firebase/firebase.utils";
 function Homepage() {
   return (
     <React.Fragment>
-      <Link to="/signin">Sign In</Link>
+      <Link to="/login">Sign In</Link>
       <button onClick={() => auth.signOut()}>Sign Out</button>
+      <Link to="/register">Register</Link>
     </React.Fragment>
   );
 }
