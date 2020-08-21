@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
@@ -16,8 +14,13 @@ import Paper from "@material-ui/core/Paper";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitter } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
-import { signInWithGoogle } from "../../firebase/firebase.utils";
 import { IoLogoFacebook } from "react-icons/io";
+
+import {
+  auth,
+  createUserProfileDocument,
+  signInWithGoogle,
+} from "../../firebase/firebase.utils";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -46,7 +49,48 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp() {
+function SignUp() {
+  const [details, setDetails] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmpassword: "",
+  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDetails((prevState) => ({ ...prevState, [name]: value }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { firstName, lastName, email, password, confirmpassword } = details;
+
+    //check if passwords are equal
+    if (password !== confirmpassword) {
+      alert("Passwords Donot Match");
+      return;
+    }
+    try {
+      const { user } = await auth.createUserWithEmailAndPassword(
+        email,
+        password
+      );
+      let displayName = firstName + " " + lastName;
+
+      await createUserProfileDocument(user, { displayName });
+
+      setDetails({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmpassword: "",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const classes = useStyles();
 
   return (
@@ -60,10 +104,11 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
+                onChange={handleChange}
                 autoComplete="fname"
                 name="firstName"
                 variant="outlined"
@@ -71,33 +116,39 @@ export default function SignUp() {
                 fullWidth
                 id="firstName"
                 label="First Name"
+                value={details.firstName}
                 autoFocus
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                onChange={handleChange}
                 variant="outlined"
                 required
                 fullWidth
                 id="lastName"
                 label="Last Name"
                 name="lastName"
+                value={details.lastName}
                 autoComplete="lname"
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
+                onChange={handleChange}
                 variant="outlined"
                 required
                 fullWidth
                 id="email"
                 label="Email Address"
                 name="email"
+                value={details.email}
                 autoComplete="email"
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
+                onChange={handleChange}
                 variant="outlined"
                 required
                 fullWidth
@@ -105,6 +156,21 @@ export default function SignUp() {
                 label="Password"
                 type="password"
                 id="password"
+                value={details.password}
+                autoComplete="current-password"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                onChange={handleChange}
+                variant="outlined"
+                required
+                fullWidth
+                name="confirmpassword"
+                label="Confirm Password"
+                type="password"
+                id="password"
+                value={details.confirmpassword}
                 autoComplete="current-password"
               />
             </Grid>
@@ -168,3 +234,5 @@ export default function SignUp() {
     </Container>
   );
 }
+
+export default SignUp;

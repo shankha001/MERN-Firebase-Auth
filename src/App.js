@@ -9,8 +9,9 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { setCurrentUser } from "./redux/user/user.actions";
 import { selectCurrentUser } from "./redux/user/user.selectors";
+import NoMatch from "./pages/404Page/404Page";
 
-function App({ setCurrentUser }) {
+function App({ setCurrentUser, currentUser }) {
   useEffect(() => {
     //check Auth
     const unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
@@ -36,8 +37,17 @@ function App({ setCurrentUser }) {
     <div>
       <Switch>
         <Route exact path="/" component={Homepage} />
-        <Route exact path="/login" render={Login} />
-        <Route exact path="/register" render={Register} />
+        <Route
+          exact
+          path="/login"
+          render={() => (currentUser ? <Redirect to="/" /> : <Login />)}
+        />
+        <Route
+          exact
+          path="/register"
+          render={() => (currentUser ? <Redirect to="/" /> : <Register />)}
+        />
+        <Route path="*" component={NoMatch} />
       </Switch>
     </div>
   );
