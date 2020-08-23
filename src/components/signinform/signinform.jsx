@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -16,7 +16,7 @@ import Paper from "@material-ui/core/Paper";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitter } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
-import { signInWithGoogle } from "../../firebase/firebase.utils";
+import { auth, signInWithGoogle } from "../../firebase/firebase.utils";
 import { IoLogoFacebook } from "react-icons/io";
 
 const useStyles = makeStyles((theme) => ({
@@ -49,6 +49,26 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn() {
   const classes = useStyles();
 
+  const [details, setDetails] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { email, password } = details;
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      setDetails({ email: "", password: "" });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDetails((prevState) => ({ ...prevState, [name]: value }));
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <Paper elevation={3} className={classes.paper}>
@@ -60,7 +80,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <TextField
             variant="outlined"
             margin="normal"
@@ -70,6 +90,8 @@ export default function SignIn() {
             label="Email Address"
             name="email"
             autoComplete="email"
+            onChange={handleChange}
+            value={details.email}
             autoFocus
           />
           <TextField
@@ -82,6 +104,8 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange={handleChange}
+            value={details.password}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
