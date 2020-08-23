@@ -10,6 +10,7 @@ import { createStructuredSelector } from "reselect";
 import { setCurrentUser } from "./redux/user/user.actions";
 import { selectCurrentUser } from "./redux/user/user.selectors";
 import NoMatch from "./pages/404Page/404Page";
+import Resetpass from "./components/resetpassword/resetpassword";
 
 function App({ setCurrentUser, currentUser }) {
   useEffect(() => {
@@ -46,6 +47,11 @@ function App({ setCurrentUser, currentUser }) {
           exact
           path="/register"
           render={() => (currentUser ? <Redirect to="/" /> : <Register />)}
+        />
+        <Route
+          exact
+          path="/reset"
+          render={() => (currentUser ? <Redirect to="/" /> : <Resetpass />)}
         />
         <Route path="*" component={NoMatch} />
       </Switch>
